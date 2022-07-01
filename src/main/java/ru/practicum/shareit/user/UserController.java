@@ -1,12 +1,25 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
-/**
- * // TODO .
- */
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping(path = "/requests")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
+    private final UserService userService;
+    @PostMapping
+    public UserDto createUser(@Valid @RequestBody UserDto userDto){
+        return userService.createUser(userDto);
+    }
+
+    @PutMapping
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto){
+        return userService.updateUser(userDto);
+    }
+
 }
