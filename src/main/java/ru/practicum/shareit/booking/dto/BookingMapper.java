@@ -11,13 +11,13 @@ public class BookingMapper {
                 .end(booking.getEnd())
                 .booker(booking.getBooker() != null ? booking.getBooker().getId() : null)
                 .item(new BookingDto.Item(
-                        (booking.getItem()!= null ? booking.getItem().getId() : null),
-                        (booking.getItem()!= null ? booking.getItem().getName() : null)))
+                        (booking.getItem() != null ? booking.getItem().getId() : null),
+                        (booking.getItem() != null ? booking.getItem().getName() : null)))
                 .status(booking.getStatus())
                 .build();
     }
 
-    public static Booking toBooking(BookingDto bookingDto){
+    public static Booking toBooking(BookingDto bookingDto) {
         return Booking.builder()
                 .id(bookingDto.getId())
                 .start(bookingDto.getStart())

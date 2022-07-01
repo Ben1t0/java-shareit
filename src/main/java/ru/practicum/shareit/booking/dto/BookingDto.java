@@ -21,7 +21,7 @@ public class BookingDto {
     private BookingStatus status;
 
     @AllArgsConstructor
-    static class Item{
+    static class Item {
         private Long id;
         private String name;
     }

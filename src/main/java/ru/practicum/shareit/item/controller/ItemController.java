@@ -9,7 +9,6 @@ import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,11 +23,12 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> findItems(@RequestParam() String text){
+    public Collection<ItemDto> findItems(@RequestParam() String text) {
         return itemService.findItemsByQuery(text);
     }
+
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") Long id){
+    public ItemDto getItemById(@PathVariable("itemId") Long id) {
         return itemService.getItemById(id);
     }
 
@@ -45,7 +45,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable("id") Long id,@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public void deleteItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         itemService.deleteItem(id, userId);
     }
 

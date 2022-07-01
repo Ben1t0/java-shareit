@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
@@ -18,30 +18,30 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getAll(){
+    public Collection<UserDto> getAll() {
         return userService.getAll();
     }
 
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable("id") Long userId){
+    public UserDto getUserById(@PathVariable("id") Long userId) {
         return userService.getUserById(userId);
     }
 
     @PostMapping
     @Validated({Validation.OnCreate.class})
-    public UserDto createUser(@Valid @RequestBody UserDto userDto){
+    public UserDto createUser(@Valid @RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }
 
     @PutMapping
     @Validated({Validation.OnUpdate.class})
-    public UserDto updateUser(@Valid @RequestBody UserDto userDto){
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
         return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") Long userId){
+    public void deleteUser(@PathVariable("id") Long userId) {
         userService.deleteUser(userId);
     }
 }
