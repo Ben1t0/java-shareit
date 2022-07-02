@@ -42,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
         Item toUpdate = itemRepository.getItem(itemDto.getId())
                 .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
 
-        if (userId != toUpdate.getId()) {
+        if (!userId.equals(toUpdate.getId())) {
             throw new ItemAccessDeniedException(itemDto.getId());
         }
         if (itemDto.getDescription() != null) {
@@ -59,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void deleteItem(Long id, Long userId) {
         Item toDelete = itemRepository.getItem(id).orElseThrow(() -> new ItemNotFoundException(id));
-        if (toDelete.getOwner().getId() != userId) {
+        if (!toDelete.getOwner().getId().equals(userId)) {
             throw new ItemAccessDeniedException(id);
         }
         itemRepository.delete(id);

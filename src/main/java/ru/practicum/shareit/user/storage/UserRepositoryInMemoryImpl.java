@@ -40,7 +40,7 @@ public class UserRepositoryInMemoryImpl implements UserRepository {
         User userFromStorage = users.get(user.getId());
         if (user.getEmail() != null) {
             if (users.values().stream()
-                    .filter(u -> u.getId() != user.getId())
+                    .filter(u -> !u.getId().equals(user.getId()))
                     .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
                 throw new UserAlreadyExistsException(String.format("User with email %s already exists", user.getEmail()));
             } else {
