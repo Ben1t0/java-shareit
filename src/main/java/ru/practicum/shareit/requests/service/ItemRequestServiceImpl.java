@@ -7,6 +7,4 @@ import ru.practicum.shareit.requests.storage.ItemRequestRepository;
 @Service
 @RequiredArgsConstructor
 public class ItemRequestServiceImpl implements ItemRequestService {
-    private final ItemRequestRepository itemRequestRepository;
-
 }
