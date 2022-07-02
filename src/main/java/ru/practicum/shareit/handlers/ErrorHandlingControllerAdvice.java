@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
+import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.validation.ValidationErrorResponse;
 import ru.practicum.shareit.validation.Violation;
@@ -53,4 +54,11 @@ public class ErrorHandlingControllerAdvice {
     public String handleAccessDeniedException(RuntimeException e) {
         return e.getMessage();
     }
+
+    @ExceptionHandler({UserAlreadyExistsException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handleAlreadyExistException(RuntimeException e) {
+        return e.getMessage();
+    }
+
 }
