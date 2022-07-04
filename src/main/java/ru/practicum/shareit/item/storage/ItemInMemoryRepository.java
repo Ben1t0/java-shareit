@@ -36,9 +36,10 @@ public class ItemInMemoryRepository implements ItemRepository {
 
     @Override
     public Collection<Item> findItemsByQuery(String query) {
+        String q = query.toLowerCase();
         return items.values().stream()
-                .filter(i -> i.getName().contains(query)
-                        || (i.getDescription() != null && i.getDescription().contains(query)))
+                .filter(i -> i.isAvailable() && (i.getName().toLowerCase().contains(q)
+                        || (i.getDescription() != null && i.getDescription().toLowerCase().contains(q))))
                 .collect(Collectors.toList());
     }
 

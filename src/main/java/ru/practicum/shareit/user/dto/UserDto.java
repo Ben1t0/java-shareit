@@ -13,10 +13,10 @@ import javax.validation.constraints.NotNull;
 public class UserDto {
     @NotNull(groups = Validation.OnUpdate.class)
     private Long id;
-    @NotNull(groups = Validation.OnCreate.class)
+    @NotNull(groups = {Validation.OnCreate.class, Validation.OnUpdate.class})
     @Email(message = "Email should be valid")
     private String email;
-    @NotNull(groups = Validation.OnCreate.class)
-    @NotBlank(groups = Validation.OnCreate.class, message = "User name can't be blank")
+    @NotNull(groups = {Validation.OnCreate.class, Validation.OnUpdate.class})
+    @NotBlank(groups = {Validation.OnCreate.class, Validation.OnUpdate.class}, message = "User name can't be blank")
     private String name;
 }

@@ -12,11 +12,14 @@ import javax.validation.constraints.NotNull;
 public class ItemDto {
     @NotNull(groups = Validation.OnUpdate.class)
     private Long id;
-    @NotNull(groups = Validation.OnCreate.class)
-    @NotBlank(groups = Validation.OnCreate.class, message = "Item name can't be blank")
+    @NotNull(groups = {Validation.OnCreate.class, Validation.OnUpdate.class})
+    @NotBlank(groups = {Validation.OnCreate.class, Validation.OnUpdate.class},
+            message = "Item name can't be blank")
     private String name;
+    @NotBlank(groups = {Validation.OnCreate.class, Validation.OnUpdate.class},
+            message = "Item description can't be blank")
     private String description;
-    @NotNull
-    private boolean available;
+    @NotNull(groups = {Validation.OnCreate.class, Validation.OnUpdate.class})
+    private Boolean available;
     private Long request;
 }

@@ -39,9 +39,19 @@ public class ItemController {
     }
 
     @PutMapping
-    @Validated(Validation.OnUpdate.class)
-    public ItemDto updateItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.updateItem(itemDto, userId);
+    @Validated(Validation.OnPatch.class)
+    public ItemDto updateItem(@Valid @RequestBody ItemDto itemDto,
+                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.patchItem(itemDto, userId);
+    }
+
+    @PatchMapping("/{itemId}")
+    @Validated(Validation.OnPatch.class)
+    public ItemDto patchItem(@PathVariable("itemId") Long id,
+                             @Valid @RequestBody ItemDto itemDto,
+                             @RequestHeader("X-Sharer-User-Id") Long userId) {
+        itemDto.setId(id);
+        return itemService.patchItem(itemDto, userId);
     }
 
     @DeleteMapping("/{id}")

@@ -40,6 +40,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto patchUser(UserDto userDto) {
+        User user = userRepository.getUserById(userDto.getId())
+                .orElseThrow(() -> new UserNotFoundException(userDto.getId()));
+
+        User userToUpdate = User.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+
+        if (userDto.getEmail() != null) {
+            userToUpdate.setEmail(userDto.getEmail());
+        }
+
+        if (userDto.getName() != null) {
+            userToUpdate.setName(userDto.getName());
+        }
+
+        return UserMapper.toUserDto(userRepository.updateUser(userToUpdate));
+    }
+
+    @Override
     public void deleteUser(Long id) {
         ensureUserExists(id);
         userRepository.deleteUser(id);

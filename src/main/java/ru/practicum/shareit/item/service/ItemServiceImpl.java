@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -42,16 +43,43 @@ public class ItemServiceImpl implements ItemService {
         Item toUpdate = itemRepository.getItem(itemDto.getId())
                 .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
 
-        if (!userId.equals(toUpdate.getId())) {
+        if (!userId.equals(toUpdate.getOwner().getId())) {
             throw new ItemAccessDeniedException(itemDto.getId());
         }
+
+        return ItemMapper.toItemDto(itemRepository.update(ItemMapper.toItem(itemDto)));
+    }
+
+    @Override
+    public ItemDto patchItem(ItemDto itemDto, Long userId) {
+        ensureUserExists(userId);
+        Item item = itemRepository.getItem(itemDto.getId())
+                .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
+
+        if (!userId.equals(item.getOwner().getId())) {
+            throw new ItemAccessDeniedException(itemDto.getId());
+        }
+
+        Item toUpdate = Item.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.isAvailable())
+                .owner(item.getOwner())
+                .request(item.getRequest())
+                .build();
+
         if (itemDto.getDescription() != null) {
             toUpdate.setDescription(itemDto.getDescription());
         }
+
         if (itemDto.getName() != null) {
             toUpdate.setName(itemDto.getName());
         }
-        toUpdate.setAvailable(itemDto.isAvailable());
+
+        if (itemDto.getAvailable() != null) {
+            toUpdate.setAvailable(itemDto.getAvailable());
+        }
 
         return ItemMapper.toItemDto(itemRepository.update(toUpdate));
     }
@@ -72,7 +100,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> findItemsByQuery(String text) {
-        return itemRepository.findItemsByQuery(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        if (text.isBlank()) {
+            return new ArrayList<>();
+        } else {
+            return itemRepository.findItemsByQuery(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        }
     }
 
     private void ensureUserExists(long id) {

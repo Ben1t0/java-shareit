@@ -10,4 +10,9 @@ public interface Validation {
      * Marks for validation during update.
      */
     interface OnUpdate {}
+
+    /**
+     * Marks for validation during partial update.
+     */
+    interface OnPatch {}
 }

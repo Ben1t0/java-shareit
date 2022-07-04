@@ -37,19 +37,13 @@ public class UserRepositoryInMemoryImpl implements UserRepository {
 
     @Override
     public User updateUser(User user) {
-        User userFromStorage = users.get(user.getId());
-        if (user.getEmail() != null) {
-            if (users.values().stream()
-                    .filter(u -> !u.getId().equals(user.getId()))
-                    .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
-                throw new UserAlreadyExistsException(String.format("User with email %s already exists", user.getEmail()));
-            } else {
-                userFromStorage.setEmail(user.getEmail());
-            }
+        if (user.getEmail() != null && users.values().stream()
+                .filter(u -> !u.getId().equals(user.getId()))
+                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+            throw new UserAlreadyExistsException(String.format("User with email %s already exists", user.getEmail()));
         }
-        if (user.getName() != null) {
-            userFromStorage.setName(user.getName());
-        }
+        users.put(user.getId(), user);
+
         return users.get(user.getId());
     }
 
