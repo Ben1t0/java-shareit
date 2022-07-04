@@ -22,7 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> getAllByOwnerId(Long ownerId) {
-        isUserExists(ownerId);
+        ensureUserExists(ownerId);
         return itemRepository.getAllByOwnerId(ownerId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long userId) {
-        isUserExists(userId);
+        ensureUserExists(userId);
         Item toUpdate = itemRepository.getItem(itemDto.getId())
                 .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
 
@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findItemsByQuery(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
-    void isUserExists(long id) {
+    private void ensureUserExists(long id) {
         userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 }

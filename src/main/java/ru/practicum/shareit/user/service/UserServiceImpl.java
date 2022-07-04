@@ -34,18 +34,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        isUserExists(userDto.getId());
+        ensureUserExists(userDto.getId());
         User user = UserMapper.toUser(userDto);
         return UserMapper.toUserDto(userRepository.updateUser(user));
     }
 
     @Override
     public void deleteUser(Long id) {
-        isUserExists(id);
+        ensureUserExists(id);
         userRepository.deleteUser(id);
     }
 
-    private void isUserExists(Long id) {
+    private void ensureUserExists(Long id) {
         userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 }

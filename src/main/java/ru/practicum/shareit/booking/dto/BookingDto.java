@@ -9,9 +9,6 @@ import ru.practicum.shareit.validation.Validation;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-/**
- * // TODO .
- */
 @Data
 @Builder
 public class BookingDto {

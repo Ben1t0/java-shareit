@@ -5,9 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.service.BookingService;
 
-/**
- * // TODO .
- */
+//TODO will be done in the next sprint
+
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor

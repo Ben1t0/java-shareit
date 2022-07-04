@@ -7,9 +7,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDate;
 
-/**
- * // TODO .
- */
 @Data
 @Builder
 public class Booking {
