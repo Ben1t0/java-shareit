@@ -18,12 +18,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.getAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        return UserMapper.toUserDto(userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(id)));
+        return UserMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
     @Override

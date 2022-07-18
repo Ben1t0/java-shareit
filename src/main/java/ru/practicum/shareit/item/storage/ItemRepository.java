@@ -1,20 +1,12 @@
 package ru.practicum.shareit.item.storage;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
-public interface ItemRepository {
-    Collection<Item> getAllByOwnerId(long ownerId);
+public interface ItemRepository extends JpaRepository<Item, Long> {
+    List<Item> findAllByOwnerId(Long id);
 
-    Item createItem(Item newItem);
-
-    Optional<Item> getItem(long id);
-
-    void delete(long id);
-
-    Item update(Item toUpdate);
-
-    Collection<Item> findItemsByQuery(String query);
+    List<Item> findAllByNameOrDescriptionContainingIgnoreCaseOrderByDesc(String text);
 }

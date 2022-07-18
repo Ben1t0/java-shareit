@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDto> getAllByOwnerId(Long ownerId) {
         ensureUserExists(ownerId);
-        return itemRepository.getAllByOwnerId(ownerId).stream()
+        return itemRepository.findAllByOwnerId(ownerId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -32,9 +32,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         Item newItem = ItemMapper.toItem(itemDto);
-        newItem.setOwner(userRepository.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
+        newItem.setOwner(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
 
-        return ItemMapper.toItemDto(itemRepository.createItem(newItem));
+        return ItemMapper.toItemDto(itemRepository.save(newItem));
     }
 
     @Override
@@ -108,6 +108,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void ensureUserExists(long id) {
-        userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
+        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 }
