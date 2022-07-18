@@ -29,19 +29,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        return UserMapper.toUserDto(userRepository.createUser(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
         ensureUserExists(userDto.getId());
         User user = UserMapper.toUser(userDto);
-        return UserMapper.toUserDto(userRepository.updateUser(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto patchUser(UserDto userDto) {
-        User user = userRepository.getUserById(userDto.getId())
+        User user = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new UserNotFoundException(userDto.getId()));
 
         User userToUpdate = User.builder()
@@ -58,16 +58,16 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setName(userDto.getName());
         }
 
-        return UserMapper.toUserDto(userRepository.updateUser(userToUpdate));
+        return UserMapper.toUserDto(userRepository.save(userToUpdate));
     }
 
     @Override
     public void deleteUser(Long id) {
         ensureUserExists(id);
-        userRepository.deleteUser(id);
+        userRepository.deleteById(id);
     }
 
     private void ensureUserExists(Long id) {
-        userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
+        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 }

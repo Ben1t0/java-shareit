@@ -40,20 +40,20 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long userId) {
         ensureUserExists(userId);
-        Item toUpdate = itemRepository.getItem(itemDto.getId())
+        Item toUpdate = itemRepository.findById(itemDto.getId())
                 .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
 
         if (!userId.equals(toUpdate.getOwner().getId())) {
             throw new ItemAccessDeniedException(itemDto.getId());
         }
 
-        return ItemMapper.toItemDto(itemRepository.update(ItemMapper.toItem(itemDto)));
+        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
     }
 
     @Override
     public ItemDto patchItem(ItemDto itemDto, Long userId) {
         ensureUserExists(userId);
-        Item item = itemRepository.getItem(itemDto.getId())
+        Item item = itemRepository.findById(itemDto.getId())
                 .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
 
         if (!userId.equals(item.getOwner().getId())) {
@@ -81,21 +81,21 @@ public class ItemServiceImpl implements ItemService {
             toUpdate.setAvailable(itemDto.getAvailable());
         }
 
-        return ItemMapper.toItemDto(itemRepository.update(toUpdate));
+        return ItemMapper.toItemDto(itemRepository.save(toUpdate));
     }
 
     @Override
     public void deleteItem(Long id, Long userId) {
-        Item toDelete = itemRepository.getItem(id).orElseThrow(() -> new ItemNotFoundException(id));
+        Item toDelete = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
         if (!toDelete.getOwner().getId().equals(userId)) {
             throw new ItemAccessDeniedException(id);
         }
-        itemRepository.delete(id);
+        itemRepository.deleteById(id);
     }
 
     @Override
     public ItemDto getItemById(Long id) {
-        return ItemMapper.toItemDto(itemRepository.getItem(id).orElseThrow(() -> new ItemNotFoundException(id)));
+        return ItemMapper.toItemDto(itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id)));
     }
 
     @Override
