@@ -1,6 +1,19 @@
 package ru.practicum.shareit.booking.service;
 
-//TODO will be done in the next sprint
+import ru.practicum.shareit.booking.dto.BookingDtoCreate;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
+
+import java.util.Collection;
 
 public interface BookingService {
+    Booking createBooking(BookingDtoCreate bookingDtoCreate);
+
+    Booking setApprove(Long bookingId, boolean approveState, Long approverId);
+
+    Booking findBookingById(Long bookingId, Long requesterId);
+
+    Collection<Booking> findAllBookingsByBookerIdAndState(Long requesterId, BookingState state);
+
+    Collection<Booking> findAllBookingsByItemOwner(Long requesterId, BookingState state);
 }

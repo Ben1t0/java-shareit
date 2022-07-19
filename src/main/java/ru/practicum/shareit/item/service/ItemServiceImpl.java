@@ -8,57 +8,42 @@ import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.storage.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
-    public Collection<ItemDto> getAllByOwnerId(Long ownerId) {
-        ensureUserExists(ownerId);
-        return itemRepository.findAllByOwnerId(ownerId).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+    public Collection<Item> getAllByOwnerId(Long ownerId) {
+        userService.getUserByIdOrThrow(ownerId);
+        return itemRepository.findAllByOwnerId(ownerId);
     }
 
     @Override
-    public ItemDto createItem(ItemDto itemDto, Long userId) {
+    public Item createItem(ItemDto itemDto, Long userId) {
         Item newItem = ItemMapper.toItem(itemDto);
-        newItem.setOwner(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
+        newItem.setOwner(userService.getUserByIdOrThrow(userId));
 
-        return ItemMapper.toItemDto(itemRepository.save(newItem));
+        return itemRepository.save(newItem);
     }
 
     @Override
-    public ItemDto updateItem(ItemDto itemDto, Long userId) {
-        ensureUserExists(userId);
-        Item toUpdate = itemRepository.findById(itemDto.getId())
-                .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
-
-        if (!userId.equals(toUpdate.getOwner().getId())) {
-            throw new ItemAccessDeniedException(itemDto.getId());
-        }
-
-        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
+    public Item updateItem(ItemDto itemDto, Long userId) {
+        userService.getUserByIdOrThrow(userId);
+        getAndCheckPermissions(itemDto.getId(), userId);
+        return itemRepository.save(ItemMapper.toItem(itemDto));
     }
 
     @Override
-    public ItemDto patchItem(ItemDto itemDto, Long userId) {
-        ensureUserExists(userId);
-        Item item = itemRepository.findById(itemDto.getId())
-                .orElseThrow(() -> new ItemNotFoundException(itemDto.getId()));
-
-        if (!userId.equals(item.getOwner().getId())) {
-            throw new ItemAccessDeniedException(itemDto.getId());
-        }
+    public Item patchItem(ItemDto itemDto, Long userId) {
+        userService.getUserByIdOrThrow(userId);
+        Item item = getAndCheckPermissions(itemDto.getId(), userId);
 
         Item toUpdate = Item.builder()
                 .id(item.getId())
@@ -81,33 +66,35 @@ public class ItemServiceImpl implements ItemService {
             toUpdate.setAvailable(itemDto.getAvailable());
         }
 
-        return ItemMapper.toItemDto(itemRepository.save(toUpdate));
+        return itemRepository.save(toUpdate);
     }
 
     @Override
     public void deleteItem(Long id, Long userId) {
-        Item toDelete = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
-        if (!toDelete.getOwner().getId().equals(userId)) {
-            throw new ItemAccessDeniedException(id);
-        }
+        getAndCheckPermissions(id, userId);
         itemRepository.deleteById(id);
     }
 
     @Override
-    public ItemDto getItemById(Long id) {
-        return ItemMapper.toItemDto(itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id)));
+    public Item getItemByIdOrThrow(Long id) {
+        return itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
     }
 
     @Override
-    public Collection<ItemDto> findItemsByQuery(String text) {
+    public Collection<Item> findItemsByQuery(String text) {
         if (text.isBlank()) {
             return new ArrayList<>();
         } else {
-            return itemRepository.findItemsByQuery(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+            return itemRepository.findItemsByQuery(text);
         }
     }
 
-    private void ensureUserExists(long id) {
-        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    @Override
+    public Item getAndCheckPermissions(Long itemId, Long userId) {
+        Item item = getItemByIdOrThrow(itemId);
+        if (!item.getOwner().getId().equals(userId)) {
+            throw new ItemAccessDeniedException(itemId);
+        }
+        return item;
     }
 }

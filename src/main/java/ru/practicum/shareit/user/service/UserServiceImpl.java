@@ -8,8 +8,7 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -17,32 +16,31 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserDto> getAll() {
-        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+    public Collection<User> getAll() {
+        return userRepository.findAll();
     }
 
     @Override
-    public UserDto getUserById(Long id) {
-        return UserMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
+    public User getUserByIdOrThrow(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
+    public User createUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        return UserMapper.toUserDto(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        ensureUserExists(userDto.getId());
+    public User updateUser(UserDto userDto) {
+        getUserByIdOrThrow(userDto.getId());
         User user = UserMapper.toUser(userDto);
-        return UserMapper.toUserDto(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
-    public UserDto patchUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new UserNotFoundException(userDto.getId()));
+    public User patchUser(UserDto userDto) {
+        User user = getUserByIdOrThrow(userDto.getId());
 
         User userToUpdate = User.builder()
                 .id(user.getId())
@@ -58,16 +56,12 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setName(userDto.getName());
         }
 
-        return UserMapper.toUserDto(userRepository.save(userToUpdate));
+        return userRepository.save(userToUpdate);
     }
 
     @Override
     public void deleteUser(Long id) {
-        ensureUserExists(id);
+        getUserByIdOrThrow(id);
         userRepository.deleteById(id);
-    }
-
-    private void ensureUserExists(Long id) {
-        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 }
