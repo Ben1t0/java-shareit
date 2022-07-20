@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.booking.exception.BookingAccessDeniedException;
+import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
@@ -74,6 +75,12 @@ public class ErrorHandlingControllerAdvice {
     @ExceptionHandler(WrongBookingTimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleWrongBookingTimeException(RuntimeException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(BookingAlreadyChecked.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleBookingAlreadyCheckedException(RuntimeException e) {
         return e.getMessage();
     }
 }

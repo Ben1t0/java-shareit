@@ -4,6 +4,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 
+import java.awt.print.Book;
 import java.util.Collection;
 
 public interface BookingService {
@@ -15,5 +16,9 @@ public interface BookingService {
 
     Collection<Booking> findAllBookingsByBookerIdAndState(Long requesterId, BookingState state);
 
-    Collection<Booking> findAllBookingsByItemOwner(Long requesterId, BookingState state);
+    Collection<Booking> findAllBookingsByItemOwnerAndState(Long requesterId, BookingState state);
+
+    Booking findLastBookingForItem(Long itemId);
+
+    Booking findNextBookingForItem(Long itemId);
 }

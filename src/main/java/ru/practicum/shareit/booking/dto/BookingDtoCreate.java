@@ -6,16 +6,16 @@ import lombok.Setter;
 import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class BookingDtoCreate {
     @NotNull(groups = Validation.OnCreate.class)
-    private Long itemID;
+    private Long itemId;
     @NotNull(groups = Validation.OnCreate.class)
-    private LocalDate start;
+    private LocalDateTime start;
     @NotNull(groups = Validation.OnCreate.class)
-    private LocalDate end;
+    private LocalDateTime end;
     @Setter
     private Long requesterId;
 }

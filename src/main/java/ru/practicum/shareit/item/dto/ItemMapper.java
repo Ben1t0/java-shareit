@@ -13,6 +13,16 @@ public class ItemMapper {
                 .build();
     }
 
+    public static ItemDtoWithBookings toItemDtoWithBookings(Item item) {
+        return ItemDtoWithBookings.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.isAvailable())
+                .request(item.getRequest() != null ? item.getRequest().getId() : null)
+                .build();
+    }
+
     public static Item toItem(ItemDto itemDto) {
         return Item.builder()
                 .id(itemDto.getId())

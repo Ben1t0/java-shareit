@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.constraints.NotBlank;
@@ -22,4 +24,14 @@ public class ItemDto {
     @NotNull(groups = {Validation.OnCreate.class, Validation.OnUpdate.class})
     private Boolean available;
     private Long request;
+
+    private Booking lastBooking;
+    private Booking nextBooking;
+
+    @AllArgsConstructor
+    @Getter
+    public static class Booking{
+        private Long id;
+        private Long bookerId;
+    }
 }

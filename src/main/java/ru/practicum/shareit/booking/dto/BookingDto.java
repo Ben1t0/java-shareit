@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
 public class BookingDto {
     private Long id;
-    private LocalDate start;
-    private LocalDate end;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private Item item;
     private User booker;
     private BookingStatus status;

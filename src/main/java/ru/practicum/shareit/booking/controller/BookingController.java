@@ -55,7 +55,7 @@ public class BookingController {
     public Collection<BookingDto> getAllBookingsByItemOwner(
             @RequestParam(name = "state", defaultValue = "ALL") BookingState state,
             @RequestHeader("X-Sharer-User-Id") Long requesterId) {
-        return bookingService.findAllBookingsByItemOwner(requesterId, state).stream()
+        return bookingService.findAllBookingsByItemOwnerAndState(requesterId, state).stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
