@@ -25,14 +25,14 @@ public class ItemDtoWithBookings {
 
     @AllArgsConstructor
     @Getter
-    public static class Booking{
+    public static class Booking {
         private Long id;
         private Long bookerId;
     }
 
     @AllArgsConstructor
     @Getter
-    public static class Comment{
+    public static class Comment {
         private Long id;
         private String authorName;
         private String text;

@@ -25,10 +25,10 @@ public class CommentServiceImpl implements CommentService {
         Item item = itemService.getItemByIdOrThrow(commentDto.getItemId());
         User author = userService.getUserByIdOrThrow(commentDto.getAuthorId());
         boolean isBooker = bookingService.findAllBookingsByBookerIdAndState(commentDto.getAuthorId(),
-                BookingState.PAST).stream()
+                        BookingState.PAST).stream()
                 .anyMatch(b -> b.getItem().getId().equals(commentDto.getItemId()));
 
-        if(isBooker){
+        if (isBooker) {
             Comment comment = Comment.builder()
                     .author(author)
                     .item(item)

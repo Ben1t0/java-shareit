@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
-import ru.practicum.shareit.booking.exception.BookingAccessDeniedException;
 import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
@@ -18,7 +17,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -48,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
         User requester = userService.getUserByIdOrThrow(bookingDtoCreate.getRequesterId());
         Item item = itemService.getItemByIdOrThrow(bookingDtoCreate.getItemId());
 
-        if(item.getOwner().getId().equals(bookingDtoCreate.getRequesterId())){
+        if (item.getOwner().getId().equals(bookingDtoCreate.getRequesterId())) {
             throw new ItemNotFoundException(item.getId());
         }
 
@@ -82,10 +80,10 @@ public class BookingServiceImpl implements BookingService {
     public Booking setApprove(Long bookingId, boolean approveState, Long approverId) {
         userService.getUserByIdOrThrow(approverId);
         Booking booking = getBookingByIdOrThrow(bookingId);
-        if(!booking.getItem().getOwner().getId().equals(approverId)){
+        if (!booking.getItem().getOwner().getId().equals(approverId)) {
             throw new BookingNotFoundException(bookingId);
         }
-        if(!booking.getStatus().equals(BookingStatus.WAITING)){
+        if (!booking.getStatus().equals(BookingStatus.WAITING)) {
             throw new BookingAlreadyChecked();
         }
         if (approveState) {

@@ -26,7 +26,7 @@ public class BookingDto {
 
     @AllArgsConstructor
     @Getter
-    static class User{
+    static class User {
         private Long id;
     }
 }
