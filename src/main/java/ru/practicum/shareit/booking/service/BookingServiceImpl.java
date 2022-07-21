@@ -19,7 +19,6 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,14 +28,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findLastBookingForItem(Long itemId) {
-        return bookingRepository.findAllByItemIdAndEndBeforeOrderByEndDesc(itemId, LocalDateTime.now()).stream()
-                .findFirst().orElse(null);
+        return bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(itemId, LocalDateTime.now());
     }
 
     @Override
     public Booking findNextBookingForItem(Long itemId) {
-        return bookingRepository.findAllByItemIdAndStartAfterOrderByStartDesc(itemId, LocalDateTime.now()).stream()
-                .findFirst().orElse(null);
+        return bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId, LocalDateTime.now());
     }
 
     private final ItemService itemService;
@@ -135,27 +132,20 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<Booking> findAllBookingsByItemOwnerAndState(Long requesterId, BookingState state) {
         userService.getUserByIdOrThrow(requesterId);
-        Collection<Long> itemsId = itemService.getAllByOwnerId(requesterId).stream()
-                .map(Item::getId)
-                .collect(Collectors.toList());
 
         switch (state) {
             case WAITING:
-                return bookingRepository.findAllByItemIdInAndStatusOrderByStartDesc(itemsId, BookingStatus.WAITING);
+                return bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.WAITING);
             case REJECTED:
-                return bookingRepository.findAllByItemIdInAndStatusOrderByStartDesc(itemsId, BookingStatus.REJECTED);
+                return bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.REJECTED);
             case PAST:
-                return bookingRepository.findAllByItemIdInAndEndIsBeforeOrderByStartDesc(itemsId,
-                        LocalDateTime.now());
+                return bookingRepository.findAllByItemOwnerIdInThePast(requesterId, LocalDateTime.now());
             case FUTURE:
-                return bookingRepository.findAllByItemIdInAndStartAfterOrderByStartDesc(itemsId,
-                        LocalDateTime.now());
+                return bookingRepository.findAllByItemOwnerIdInTheFuture(requesterId, LocalDateTime.now());
             case CURRENT:
-                LocalDateTime now = LocalDateTime.now();
-                return bookingRepository.findAllByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemsId,
-                        now, now);
+                return bookingRepository.findAllByItemOwnerIdCurrentDate(requesterId, LocalDateTime.now());
             default:
-                return bookingRepository.findAllByItemIdInOrderByStartDesc(itemsId);
+                return bookingRepository.findAllByItemOwnerId(requesterId);
         }
     }
 
