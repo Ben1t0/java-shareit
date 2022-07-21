@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.exception.BookingAccessDeniedException;
 import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
+import ru.practicum.shareit.item.exception.CommentNoBookingException;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemUnavailableException;
@@ -81,6 +82,12 @@ public class ErrorHandlingControllerAdvice {
     @ExceptionHandler(BookingAlreadyChecked.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBookingAlreadyCheckedException(RuntimeException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(CommentNoBookingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleCommentNoBookingException(RuntimeException e) {
         return e.getMessage();
     }
 }

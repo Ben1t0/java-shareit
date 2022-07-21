@@ -8,6 +8,8 @@ import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 
 @Data
 @Builder
@@ -25,13 +27,26 @@ public class ItemDto {
     private Boolean available;
     private Long request;
 
-    private Booking lastBooking;
-    private Booking nextBooking;
+    //private Booking lastBooking;
+    //private Booking nextBooking;
 
-    @AllArgsConstructor
+    //private HashSet<Comment> comments;
+
+ /*   @AllArgsConstructor
     @Getter
     public static class Booking{
         private Long id;
         private Long bookerId;
-    }
+    }*/
+/*
+    @AllArgsConstructor
+    @Getter
+    public static class Comment{
+        private Long id;
+        private String authorName;
+        private String text;
+        private LocalDateTime created;
+    }*/
+
+
 }

@@ -52,6 +52,7 @@ public class ItemServiceImpl implements ItemService {
                 .available(item.isAvailable())
                 .owner(item.getOwner())
                 .request(item.getRequest())
+                .comments(item.getComments())
                 .build();
 
         if (itemDto.getDescription() != null) {

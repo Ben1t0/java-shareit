@@ -2,8 +2,10 @@ package ru.practicum.shareit.item.dto;
 
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.stream.Collectors;
+
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public static ItemDto toDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -13,13 +15,17 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemDtoWithBookings toItemDtoWithBookings(Item item) {
+    public static ItemDtoWithBookings toDtoWithBookings(Item item) {
         return ItemDtoWithBookings.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.isAvailable())
                 .request(item.getRequest() != null ? item.getRequest().getId() : null)
+                .comments(item.getComments().stream()
+                        .map(i -> new ItemDtoWithBookings.Comment(i.getId(),i.getAuthor().getName(),
+                                i.getText(), i.getCreated()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

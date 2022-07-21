@@ -5,6 +5,8 @@ import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
 
 @Getter
 @Setter
@@ -29,4 +31,7 @@ public class Item {
     @OneToOne
     @JoinColumn(name = "request_id")
     private ItemRequest request;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Comment> comments = new HashSet<>();
 }
