@@ -2,7 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
@@ -13,12 +15,12 @@ import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemUnavailableException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,20 +30,18 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findLastBookingForItem(Long itemId) {
-        return bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(itemId, LocalDateTime.now());
+        return bookingRepository.findLastBookingByItemId(itemId, LocalDateTime.now());
     }
 
     @Override
     public Booking findNextBookingForItem(Long itemId) {
-        return bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId, LocalDateTime.now());
+        return bookingRepository.findNextBookingByItemId(itemId, LocalDateTime.now());
     }
 
-    private final ItemService itemService;
 
     @Override
-    public Booking createBooking(BookingDtoCreate bookingDtoCreate) {
+    public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Item item) {
         User requester = userService.getUserByIdOrThrow(bookingDtoCreate.getRequesterId());
-        Item item = itemService.getItemByIdOrThrow(bookingDtoCreate.getItemId());
 
         if (item.getOwner().getId().equals(bookingDtoCreate.getRequesterId())) {
             throw new ItemNotFoundException(item.getId());
@@ -70,11 +70,11 @@ public class BookingServiceImpl implements BookingService {
                 .booker(requester)
                 .item(item)
                 .build();
-        return bookingRepository.save(booking);
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
-    public Booking setApprove(Long bookingId, boolean approveState, Long approverId) {
+    public BookingDto setApprove(Long bookingId, boolean approveState, Long approverId) {
         userService.getUserByIdOrThrow(approverId);
         Booking booking = getBookingByIdOrThrow(bookingId);
         if (!booking.getItem().getOwner().getId().equals(approverId)) {
@@ -88,65 +88,74 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(BookingStatus.REJECTED);
         }
-        return bookingRepository.save(booking);
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
-    public Booking findBookingById(Long bookingId, Long requesterId) {
+    public BookingDto findBookingById(Long bookingId, Long requesterId) {
         userService.getUserByIdOrThrow(requesterId);
         Booking booking = getBookingByIdOrThrow(bookingId);
 
         if (booking.getBooker().getId().equals(requesterId)
                 || booking.getItem().getOwner().getId().equals(requesterId)) {
-            return booking;
+            return BookingMapper.toBookingDto(booking);
         } else {
             throw new BookingNotFoundException(bookingId);
         }
     }
 
     @Override
-    public Collection<Booking> findAllBookingsByBookerIdAndState(Long requesterId, BookingState state) {
+    public Collection<BookingDto> findAllBookingsByBookerIdAndState(Long requesterId, BookingState state) {
         userService.getUserByIdOrThrow(requesterId);
+        Collection<Booking> bookings;
         switch (state) {
             case WAITING:
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(requesterId,
-                        BookingStatus.WAITING);
+                bookings = bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.WAITING);
+                break;
             case REJECTED:
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(requesterId,
-                        BookingStatus.REJECTED);
+                bookings =  bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.REJECTED);
+                break;
             case PAST:
-                return bookingRepository.findByBookerIdAndEndIsBeforeOrderByStartDesc(requesterId,
-                        LocalDateTime.now());
+                bookings =  bookingRepository.findAllUserBookingsBeforeDate(requesterId, LocalDateTime.now());
+                break;
             case FUTURE:
-                return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(requesterId,
-                        LocalDateTime.now());
+                bookings =  bookingRepository.findAllUserBookingsAfterDate(requesterId, LocalDateTime.now());
+                break;
             case CURRENT:
-                LocalDateTime now = LocalDateTime.now();
-                return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(requesterId,
-                        now, now);
+                bookings =  bookingRepository.findAllUserBookingsAtDate(requesterId, LocalDateTime.now());
+                break;
             default:
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(requesterId);
+                bookings =  bookingRepository.findAllUserBookings(requesterId);
+                break;
         }
+        return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
     }
 
     @Override
-    public Collection<Booking> findAllBookingsByItemOwnerAndState(Long requesterId, BookingState state) {
+    public Collection<BookingDto> findAllBookingsByItemOwnerAndState(Long requesterId, BookingState state) {
         userService.getUserByIdOrThrow(requesterId);
-
+        Collection<Booking> bookings;
         switch (state) {
             case WAITING:
-                return bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.WAITING);
+                bookings =  bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.WAITING);
+                break;
             case REJECTED:
-                return bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.REJECTED);
+                bookings =  bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.REJECTED);
+                break;
             case PAST:
-                return bookingRepository.findAllByItemOwnerIdInThePast(requesterId, LocalDateTime.now());
+                bookings =  bookingRepository.findAllByItemOwnerIdInThePast(requesterId, LocalDateTime.now());
+                break;
             case FUTURE:
-                return bookingRepository.findAllByItemOwnerIdInTheFuture(requesterId, LocalDateTime.now());
+                bookings =  bookingRepository.findAllByItemOwnerIdInTheFuture(requesterId, LocalDateTime.now());
+                break;
             case CURRENT:
-                return bookingRepository.findAllByItemOwnerIdCurrentDate(requesterId, LocalDateTime.now());
+                bookings =  bookingRepository.findAllByItemOwnerIdCurrentDate(requesterId, LocalDateTime.now());
+                break;
             default:
-                return bookingRepository.findAllByItemOwnerId(requesterId);
+                bookings =  bookingRepository.findAllByItemOwnerId(requesterId);
+                break;
         }
+        return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
     }
 
     Booking getBookingByIdOrThrow(Long bookingId) {

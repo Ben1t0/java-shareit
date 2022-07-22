@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentMapper;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.exception.CommentNoBookingException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -21,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
     private final BookingService bookingService;
 
     @Override
-    public Comment createComment(CommentDto commentDto) {
+    public CommentResponseDto createComment(CommentDto commentDto) {
         Item item = itemService.getItemByIdOrThrow(commentDto.getItemId());
         User author = userService.getUserByIdOrThrow(commentDto.getAuthorId());
         boolean isBooker = bookingService.findAllBookingsByBookerIdAndState(commentDto.getAuthorId(),
@@ -37,11 +39,9 @@ public class CommentServiceImpl implements CommentService {
                     .build();
             item.getComments().add(comment);
             commentRepository.save(comment);
-            return comment;
+            return CommentMapper.toResponseDto(comment);
         } else {
             throw new CommentNoBookingException();
         }
-
-
     }
 }

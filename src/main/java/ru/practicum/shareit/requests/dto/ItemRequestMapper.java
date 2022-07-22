@@ -8,7 +8,7 @@ public class ItemRequestMapper {
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
-                .requestor(itemRequest.getRequestor() != null ? itemRequest.getRequestor().getId() : null)
+                .requestor(itemRequest.getRequester() != null ? itemRequest.getRequester().getId() : null)
                 .build();
     }
 }

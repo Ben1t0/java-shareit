@@ -21,31 +21,31 @@ public class UserController {
 
     @GetMapping
     public Collection<UserDto> getAll() {
-        return userService.getAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable("id") Long userId) {
-        return UserMapper.toUserDto(userService.getUserByIdOrThrow(userId));
+        return userService.getUserDtoByOrThrow(userId);
     }
 
     @PostMapping
     @Validated({Validation.OnCreate.class})
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        return UserMapper.toUserDto(userService.createUser(userDto));
+        return userService.createUser(userDto);
     }
 
     @PutMapping
     @Validated({Validation.OnUpdate.class})
     public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
-        return UserMapper.toUserDto(userService.updateUser(userDto));
+        return userService.updateUser(userDto);
     }
 
     @PatchMapping("/{id}")
     @Validated({Validation.OnPatch.class})
     public UserDto patchUser(@PathVariable("id") Long userId, @Valid @RequestBody UserDto userDto) {
         userDto.setId(userId);
-        return UserMapper.toUserDto(userService.patchUser(userDto));
+        return userService.patchUser(userDto);
     }
 
     @DeleteMapping("/{id}")

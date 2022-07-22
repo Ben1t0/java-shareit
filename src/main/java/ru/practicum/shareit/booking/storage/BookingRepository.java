@@ -9,17 +9,21 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Collection<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId);
 
-    Collection<Booking> findAllByBookerIdAndStatusOrderByStartDesc(Long bookerId, BookingStatus bookingStatus);
+    @Query("SELECT b FROM Booking AS b WHERE b.booker.id = ?1 ORDER BY b.start DESC")
+    Collection<Booking> findAllUserBookings(Long bookerId);
 
-    Collection<Booking> findByBookerIdAndEndIsBeforeOrderByStartDesc(Long bookerId, LocalDateTime end);
+    @Query("SELECT b FROM Booking AS b WHERE b.booker.id = ?1 AND b.status = ?2 ORDER BY b.start DESC")
+    Collection<Booking> findAllUserBookingsWithStatus(Long bookerId, BookingStatus bookingStatus);
 
-    Collection<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(Long bookerId, LocalDateTime start);
+    @Query("SELECT b FROM Booking AS b WHERE b.booker.id = ?1 AND b.end < ?2 ORDER BY b.start DESC")
+    Collection<Booking> findAllUserBookingsBeforeDate(Long bookerId, LocalDateTime end);
 
+    @Query("SELECT b FROM Booking AS b WHERE b.booker.id = ?1 AND b.start > ?2 ORDER BY b.start DESC")
+    Collection<Booking> findAllUserBookingsAfterDate(Long bookerId, LocalDateTime start);
 
-    Collection<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(Long bookerId, LocalDateTime start,
-                                                                                   LocalDateTime end);
+    @Query("SELECT b FROM Booking AS b WHERE b.booker.id = ?1 AND (b.start >= ?2 AND b.end < ?2) ORDER BY b.start DESC")
+    Collection<Booking> findAllUserBookingsAtDate(Long bookerId, LocalDateTime date);
 
     @Query("SELECT b FROM Booking as b " +
             "WHERE b.item.id IN (SELECT i.id FROM Item AS i WHERE i.owner.id = ?1) " +
@@ -50,7 +54,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "ORDER BY b.start DESC")
     Collection<Booking> findAllByItemOwnerIdCurrentDate(Long ownerId, LocalDateTime date);
 
-    Booking findFirstByItemIdAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime localDateTime);
+    @Query("SELECT b FROM Booking AS b WHERE b.item.id = ?1 AND b.end < ?2 ORDER BY b.end DESC")
+    Booking findLastBookingByItemId(Long itemId, LocalDateTime localDateTime);
 
-    Booking findFirstByItemIdAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime localDateTime);
+    @Query("SELECT b FROM Booking AS b WHERE b.item.id = ?1 AND b.start > ?2 ORDER BY b.end ASC")
+    Booking findNextBookingByItemId(Long itemId, LocalDateTime localDateTime);
 }

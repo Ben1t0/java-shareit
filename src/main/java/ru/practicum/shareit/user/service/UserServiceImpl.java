@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,8 +17,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public Collection<User> getAll() {
-        return userRepository.findAll();
+    public Collection<UserDto> getAll() {
+        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
@@ -26,20 +27,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        return userRepository.save(user);
+    public UserDto getUserDtoByOrThrow(Long id) {
+        return UserMapper.toUserDto(getUserByIdOrThrow(id));
     }
 
     @Override
-    public User updateUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toUserDto(userRepository.save(user));
+    }
+
+    @Override
+    public UserDto updateUser(UserDto userDto) {
         getUserByIdOrThrow(userDto.getId());
         User user = UserMapper.toUser(userDto);
-        return userRepository.save(user);
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
-    public User patchUser(UserDto userDto) {
+    public UserDto patchUser(UserDto userDto) {
         User user = getUserByIdOrThrow(userDto.getId());
 
         User userToUpdate = User.builder()
@@ -56,7 +62,7 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setName(userDto.getName());
         }
 
-        return userRepository.save(userToUpdate);
+        return UserMapper.toUserDto(userRepository.save(userToUpdate));
     }
 
     @Override

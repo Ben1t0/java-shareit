@@ -19,14 +19,14 @@ public class BookingDto {
 
     @AllArgsConstructor
     @Getter
-    static class Item {
+    public static class Item {
         private Long id;
         private String name;
     }
 
     @AllArgsConstructor
     @Getter
-    static class User {
+    public static class User {
         private Long id;
     }
 }
