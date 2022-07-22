@@ -9,7 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.Collection;
 
 public interface BookingService {
-    BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Item item);
+    BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId, Item item);
 
     BookingDto setApprove(Long bookingId, boolean approveState, Long approverId);
 

@@ -40,8 +40,8 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Item item) {
-        User requester = userService.getUserByIdOrThrow(bookingDtoCreate.getRequesterId());
+    public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId, Item item) {
+        User booker = userService.getUserByIdOrThrow(userId);
 
         if (item.getOwner().getId().equals(bookingDtoCreate.getRequesterId())) {
             throw new ItemNotFoundException(item.getId());
@@ -67,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
                 .status(BookingStatus.WAITING)
                 .start(bookingDtoCreate.getStart())
                 .end(bookingDtoCreate.getEnd())
-                .booker(requester)
+                .booker(booker)
                 .item(item)
                 .build();
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
@@ -113,19 +113,19 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings =  bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.REJECTED);
                 break;
             case PAST:
-                bookings =  bookingRepository.findAllUserBookingsBeforeDate(requesterId, LocalDateTime.now());
+                bookings = bookingRepository.findAllUserBookingsBeforeDate(requesterId, LocalDateTime.now());
                 break;
             case FUTURE:
-                bookings =  bookingRepository.findAllUserBookingsAfterDate(requesterId, LocalDateTime.now());
+                bookings = bookingRepository.findAllUserBookingsAfterDate(requesterId, LocalDateTime.now());
                 break;
             case CURRENT:
-                bookings =  bookingRepository.findAllUserBookingsAtDate(requesterId, LocalDateTime.now());
+                bookings = bookingRepository.findAllUserBookingsAtDate(requesterId, LocalDateTime.now());
                 break;
             default:
-                bookings =  bookingRepository.findAllUserBookings(requesterId);
+                bookings = bookingRepository.findAllUserBookings(requesterId);
                 break;
         }
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
@@ -137,22 +137,22 @@ public class BookingServiceImpl implements BookingService {
         Collection<Booking> bookings;
         switch (state) {
             case WAITING:
-                bookings =  bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.WAITING);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.WAITING);
                 break;
             case REJECTED:
-                bookings =  bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.REJECTED);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.REJECTED);
                 break;
             case PAST:
-                bookings =  bookingRepository.findAllByItemOwnerIdInThePast(requesterId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByItemOwnerIdInThePast(requesterId, LocalDateTime.now());
                 break;
             case FUTURE:
-                bookings =  bookingRepository.findAllByItemOwnerIdInTheFuture(requesterId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByItemOwnerIdInTheFuture(requesterId, LocalDateTime.now());
                 break;
             case CURRENT:
-                bookings =  bookingRepository.findAllByItemOwnerIdCurrentDate(requesterId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByItemOwnerIdCurrentDate(requesterId, LocalDateTime.now());
                 break;
             default:
-                bookings =  bookingRepository.findAllByItemOwnerId(requesterId);
+                bookings = bookingRepository.findAllByItemOwnerId(requesterId);
                 break;
         }
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());

@@ -25,9 +25,8 @@ public class BookingController {
     @Validated(Validation.OnCreate.class)
     public BookingDto createBooking(@Valid @RequestBody BookingDtoCreate bookingDtoCreate,
                                     @RequestHeader("X-Sharer-User-Id") Long requesterId) {
-        bookingDtoCreate.setRequesterId(requesterId);
         Item item = itemService.getItemByIdOrThrow(bookingDtoCreate.getItemId());
-        return bookingService.createBooking(bookingDtoCreate, item);
+        return bookingService.createBooking(bookingDtoCreate, requesterId, item);
     }
 
     @PatchMapping("/{bookingId}")
