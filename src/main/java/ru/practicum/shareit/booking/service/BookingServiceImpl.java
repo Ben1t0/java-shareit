@@ -43,7 +43,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId, Item item) {
         User booker = userService.getUserByIdOrThrow(userId);
 
-        if (item.getOwner().getId().equals(bookingDtoCreate.getRequesterId())) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new ItemNotFoundException(item.getId());
         }
 
