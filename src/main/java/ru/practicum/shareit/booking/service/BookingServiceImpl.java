@@ -15,6 +15,7 @@ import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemUnavailableException;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
+    private final ItemRepository itemRepository;
 
     @Override
     public Booking findLastBookingForItem(Long itemId) {
@@ -40,9 +42,11 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId, Item item) {
+    public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId) {
         User booker = userService.getUserByIdOrThrow(userId);
 
+        Item item = itemRepository.findById(bookingDtoCreate.getItemId())
+                .orElseThrow(() -> new ItemNotFoundException(bookingDtoCreate.getItemId()));
         if (item.getOwner().getId().equals(userId)) {
             throw new ItemNotFoundException(item.getId());
         }

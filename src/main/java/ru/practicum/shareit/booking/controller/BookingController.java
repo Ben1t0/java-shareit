@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Validation;
 
@@ -25,8 +24,7 @@ public class BookingController {
     @Validated(Validation.OnCreate.class)
     public BookingDto createBooking(@Valid @RequestBody BookingDtoCreate bookingDtoCreate,
                                     @RequestHeader("X-Sharer-User-Id") Long requesterId) {
-        Item item = itemService.getItemByIdOrThrow(bookingDtoCreate.getItemId());
-        return bookingService.createBooking(bookingDtoCreate, requesterId, item);
+        return bookingService.createBooking(bookingDtoCreate, requesterId);
     }
 
     @PatchMapping("/{bookingId}")
