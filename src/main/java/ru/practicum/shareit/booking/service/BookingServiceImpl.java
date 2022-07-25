@@ -47,7 +47,7 @@ public class BookingServiceImpl implements BookingService {
 
         Item item = itemRepository.findById(bookingDtoCreate.getItemId())
                 .orElseThrow(() -> new ItemNotFoundException(bookingDtoCreate.getItemId()));
-        if (item.getOwner().getId().equals(userId)) {
+        if (isItemOwner(item, userId)) {
             throw new ItemNotFoundException(item.getId());
         }
 
@@ -81,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto setApprove(Long bookingId, boolean approveState, Long approverId) {
         userService.getUserByIdOrThrow(approverId);
         Booking booking = getBookingByIdOrThrow(bookingId);
-        if (!booking.getItem().getOwner().getId().equals(approverId)) {
+        if (!isItemOwner(booking.getItem(), approverId)) {
             throw new BookingNotFoundException(bookingId);
         }
         if (!booking.getStatus().equals(BookingStatus.WAITING)) {
@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = getBookingByIdOrThrow(bookingId);
 
         if (booking.getBooker().getId().equals(requesterId)
-                || booking.getItem().getOwner().getId().equals(requesterId)) {
+                || isItemOwner(booking.getItem(), requesterId)) {
             return BookingMapper.toBookingDto(booking);
         } else {
             throw new BookingNotFoundException(bookingId);
@@ -162,7 +162,12 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
     }
 
-    Booking getBookingByIdOrThrow(Long bookingId) {
+    private Booking getBookingByIdOrThrow(Long bookingId) {
         return bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException(bookingId));
     }
+
+    private boolean isItemOwner(Item item, long userId) {
+        return item.getOwner().getId().equals(userId);
+    }
+
 }

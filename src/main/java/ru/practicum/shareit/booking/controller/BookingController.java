@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.Valid;
@@ -18,7 +17,6 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
-    private final ItemService itemService;
 
     @PostMapping
     @Validated(Validation.OnCreate.class)
