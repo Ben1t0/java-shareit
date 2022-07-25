@@ -43,29 +43,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId) {
+        validateBookingDtoCreate(bookingDtoCreate);
         User booker = userService.getUserByIdOrThrow(userId);
-
-        Item item = itemRepository.findById(bookingDtoCreate.getItemId())
-                .orElseThrow(() -> new ItemNotFoundException(bookingDtoCreate.getItemId()));
-        if (isItemOwner(item, userId)) {
-            throw new ItemNotFoundException(item.getId());
-        }
-
-        if (!item.isAvailable()) {
-            throw new ItemUnavailableException(item.getId());
-        }
-
-        if (bookingDtoCreate.getStart().isBefore(LocalDateTime.now())) {
-            throw new WrongBookingTimeException("Start time is in the past");
-        }
-
-        if (bookingDtoCreate.getEnd().isBefore(LocalDateTime.now())) {
-            throw new WrongBookingTimeException("End time is in the past");
-        }
-
-        if (bookingDtoCreate.getEnd().isBefore(bookingDtoCreate.getStart())) {
-            throw new WrongBookingTimeException("End time is before start time");
-        }
+        Item item = validateAndGetItem(bookingDtoCreate.getItemId(), userId);
 
         Booking booking = Booking.builder()
                 .status(BookingStatus.WAITING)
@@ -170,4 +150,31 @@ public class BookingServiceImpl implements BookingService {
         return item.getOwner().getId().equals(userId);
     }
 
+    private void validateBookingDtoCreate(BookingDtoCreate bookingDtoCreate) {
+        if (bookingDtoCreate.getStart().isBefore(LocalDateTime.now())) {
+            throw new WrongBookingTimeException("Start time is in the past");
+        }
+
+        if (bookingDtoCreate.getEnd().isBefore(LocalDateTime.now())) {
+            throw new WrongBookingTimeException("End time is in the past");
+        }
+
+        if (bookingDtoCreate.getEnd().isBefore(bookingDtoCreate.getStart())) {
+            throw new WrongBookingTimeException("End time is before start time");
+        }
+    }
+
+    private Item validateAndGetItem(long itemId, long userId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException(itemId));
+
+        if (isItemOwner(item, userId)) {
+            throw new ItemNotFoundException(item.getId());
+        }
+
+        if (!item.isAvailable()) {
+            throw new ItemUnavailableException(item.getId());
+        }
+        return item;
+    }
 }
