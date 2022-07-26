@@ -2,30 +2,31 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.validation.Validation;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Builder
 public class BookingDto {
-    @NotNull(groups = Validation.OnUpdate.class)
     private Long id;
-    @NotNull(groups = Validation.OnCreate.class)
-    private LocalDate start;
-    @NotNull(groups = Validation.OnCreate.class)
-    private LocalDate end;
-    @NotNull(groups = Validation.OnCreate.class)
+    private LocalDateTime start;
+    private LocalDateTime end;
     private Item item;
-    private Long booker;
+    private User booker;
     private BookingStatus status;
 
     @AllArgsConstructor
-    static class Item {
+    @Getter
+    public static class Item {
         private Long id;
         private String name;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class User {
+        private Long id;
     }
 }

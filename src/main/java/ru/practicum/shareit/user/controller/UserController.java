@@ -22,10 +22,9 @@ public class UserController {
         return userService.getAll();
     }
 
-
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable("id") Long userId) {
-        return userService.getUserById(userId);
+        return userService.getUserDtoByOrThrow(userId);
     }
 
     @PostMapping
@@ -42,8 +41,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @Validated({Validation.OnPatch.class})
-    public UserDto patchUser(@PathVariable("id") Long userId,
-                              @Valid @RequestBody UserDto userDto) {
+    public UserDto patchUser(@PathVariable("id") Long userId, @Valid @RequestBody UserDto userDto) {
         userDto.setId(userId);
         return userService.patchUser(userDto);
     }

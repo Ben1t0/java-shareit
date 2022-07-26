@@ -3,11 +3,13 @@ package ru.practicum.shareit.item.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.service.CommentService;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @RestController
@@ -16,9 +18,10 @@ import java.util.Collection;
 @Validated
 public class ItemController {
     private final ItemService itemService;
+    private final CommentService commentService;
 
     @GetMapping
-    public Collection<ItemDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<ItemDtoWithBookings> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAllByOwnerId(userId);
     }
 
@@ -28,8 +31,9 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") Long id) {
-        return itemService.getItemById(id);
+    public ItemDtoWithBookings getItemById(@PathVariable("itemId") Long id,
+                                           @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.getItemByIdWithBookingsOrThrow(id, userId);
     }
 
     @PostMapping
@@ -42,7 +46,7 @@ public class ItemController {
     @Validated(Validation.OnPatch.class)
     public ItemDto updateItem(@Valid @RequestBody ItemDto itemDto,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.patchItem(itemDto, userId);
+        return itemService.updateItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
@@ -59,4 +63,14 @@ public class ItemController {
         itemService.deleteItem(id, userId);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public CommentResponseDto createComment(@PathVariable("itemId") Long itemId,
+                                            @Valid @RequestBody CommentDto commentDto,
+                                            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        LocalDateTime created = LocalDateTime.now();
+        commentDto.setCreated(created);
+        commentDto.setAuthorId(userId);
+        commentDto.setItemId(itemId);
+        return commentService.createComment(commentDto);
+    }
 }

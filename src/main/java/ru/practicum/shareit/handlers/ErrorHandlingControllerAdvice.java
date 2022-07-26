@@ -5,8 +5,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.exception.BookingAccessDeniedException;
+import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
+import ru.practicum.shareit.booking.exception.BookingNotFoundException;
+import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
+import ru.practicum.shareit.item.exception.CommentNoBookingException;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
+import ru.practicum.shareit.item.exception.ItemUnavailableException;
 import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.validation.ValidationErrorResponse;
@@ -43,15 +49,21 @@ public class ErrorHandlingControllerAdvice {
     }
 
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFoundException(RuntimeException e) {
         return e.getMessage();
     }
 
-    @ExceptionHandler(ItemAccessDeniedException.class)
+    @ExceptionHandler({ItemAccessDeniedException.class, BookingAccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDeniedException(RuntimeException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(ItemUnavailableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleItemUnavailableException(RuntimeException e) {
         return e.getMessage();
     }
 
@@ -61,4 +73,21 @@ public class ErrorHandlingControllerAdvice {
         return e.getMessage();
     }
 
+    @ExceptionHandler(WrongBookingTimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleWrongBookingTimeException(RuntimeException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(BookingAlreadyChecked.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleBookingAlreadyCheckedException(RuntimeException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(CommentNoBookingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleCommentNoBookingException(RuntimeException e) {
+        return e.getMessage();
+    }
 }
