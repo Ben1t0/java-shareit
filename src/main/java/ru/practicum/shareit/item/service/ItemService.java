@@ -8,7 +8,7 @@ import java.util.Collection;
 
 
 public interface ItemService {
-    Collection<ItemDtoWithBookings> getAllByOwnerId(Long userId);
+    Collection<ItemDtoWithBookings> getAllByOwnerId(Long userId, Integer from, Integer size);
 
     ItemDto createItem(ItemDto itemDto, Long userId);
 
@@ -22,7 +22,7 @@ public interface ItemService {
 
     ItemDtoWithBookings getItemByIdWithBookingsOrThrow(Long itemId, Long requesterId);
 
-    Collection<ItemDto> findItemsByQuery(String text);
+    Collection<ItemDto> findItemsByQuery(String text, Integer from, Integer size);
 
     Item getAndCheckPermissions(Long itemId, Long userId);
 }

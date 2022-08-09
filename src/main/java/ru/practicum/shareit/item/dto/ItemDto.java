@@ -21,5 +21,5 @@ public class ItemDto {
     private String description;
     @NotNull(groups = {Validation.OnCreate.class, Validation.OnUpdate.class})
     private Boolean available;
-    private Long request;
+    private Long requestId;
 }
