@@ -74,6 +74,8 @@ class ItemServiceImplIntegrationTest {
         Thread.sleep(1000);
         Collection<ItemDtoWithBookings> items = itemService.getAllByOwnerId(userDto.getId(), 0, 100);
 
+        ItemDtoWithBookings itemBook = itemService.getItemByIdWithBookingsOrThrow(item1.getId(),userDto.getId());
+
         assertThat(items).hasSize(2);
         assertThat(items).element(0)
                 .matches(i -> i.getId().equals(item1.getId()) &&
