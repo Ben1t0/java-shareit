@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class ItemServiceImplTest {
+class ItemServiceImplIntegrationTest {
 
     @Autowired
     private ItemService itemService;
@@ -84,6 +84,7 @@ class ItemServiceImplTest {
                         i.getLastBooking().getBookerId().equals(anotherUser.getId()) &&
                         i.getNextBooking().getId().equals(bookDto1next.getId()) &&
                         i.getNextBooking().getBookerId().equals(anotherUser.getId()));
+
         assertThat(items).element(1)
                 .matches(i -> i.getId().equals(item2.getId()) &&
                         i.getAvailable().equals(true) &&

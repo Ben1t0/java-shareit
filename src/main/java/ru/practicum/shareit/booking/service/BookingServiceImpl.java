@@ -35,12 +35,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findLastBookingForItem(Long itemId) {
-        return bookingRepository.findLastBookingByItemId(itemId, LocalDateTime.now());
+        return bookingRepository.findLastBookingByItemIdOrderEndDesc(itemId, LocalDateTime.now());
     }
 
     @Override
     public Booking findNextBookingForItem(Long itemId) {
-        return bookingRepository.findNextBookingByItemId(itemId, LocalDateTime.now());
+        return bookingRepository.findNextBookingByItemIdOrderEndAsc(itemId, LocalDateTime.now());
     }
 
 
@@ -83,8 +83,7 @@ public class BookingServiceImpl implements BookingService {
         userService.getUserByIdOrThrow(requesterId);
         Booking booking = getBookingByIdOrThrow(bookingId);
 
-        if (booking.getBooker().getId().equals(requesterId)
-                || isItemOwner(booking.getItem(), requesterId)) {
+        if (booking.getBooker().getId().equals(requesterId) || isItemOwner(booking.getItem(), requesterId)) {
             return BookingMapper.toBookingDto(booking);
         } else {
             throw new BookingNotFoundException(bookingId);
@@ -112,22 +111,27 @@ public class BookingServiceImpl implements BookingService {
         }
         switch (bookingState) {
             case WAITING:
-                bookings = bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.WAITING, page);
+                bookings = bookingRepository.findAllUserBookingsWithStatusOrderStartDesc(requesterId,
+                        BookingStatus.WAITING, page);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllUserBookingsWithStatus(requesterId, BookingStatus.REJECTED, page);
+                bookings = bookingRepository.findAllUserBookingsWithStatusOrderStartDesc(requesterId,
+                        BookingStatus.REJECTED, page);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllUserBookingsBeforeDate(requesterId, LocalDateTime.now(), page);
+                bookings = bookingRepository.findAllUserBookingsBeforeDateOrderStartDesc(requesterId,
+                        LocalDateTime.now(), page);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllUserBookingsAfterDate(requesterId, LocalDateTime.now(), page);
+                bookings = bookingRepository.findAllUserBookingsAfterDateOrderStartDesc(requesterId,
+                        LocalDateTime.now(), page);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllUserBookingsAtDate(requesterId, LocalDateTime.now(), page);
+                bookings = bookingRepository.findAllUserBookingsAtDateOrderStartDesc(requesterId,
+                        LocalDateTime.now(), page);
                 break;
             default:
-                bookings = bookingRepository.findAllUserBookings(requesterId, page);
+                bookings = bookingRepository.findAllUserBookingsOrderStartDesc(requesterId, page);
                 break;
         }
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
@@ -147,22 +151,27 @@ public class BookingServiceImpl implements BookingService {
         Pageable page = PageRequest.of(from, size);
         switch (bookingState) {
             case WAITING:
-                bookings = bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.WAITING, page);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderStartDesc(requesterId,
+                        BookingStatus.WAITING, page);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByItemOwnerIdAndStatus(requesterId, BookingStatus.REJECTED, page);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderStartDesc(requesterId,
+                        BookingStatus.REJECTED, page);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByItemOwnerIdInThePast(requesterId, LocalDateTime.now(), page);
+                bookings = bookingRepository.findAllByItemOwnerIdInThePastOrderStartDesc(requesterId,
+                        LocalDateTime.now(), page);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByItemOwnerIdInTheFuture(requesterId, LocalDateTime.now(), page);
+                bookings = bookingRepository.findAllByItemOwnerIdInTheFutureOrderStartDesc(requesterId,
+                        LocalDateTime.now(), page);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllByItemOwnerIdCurrentDate(requesterId, LocalDateTime.now(), page);
+                bookings = bookingRepository.findAllByItemOwnerIdCurrentDateOrderStartDesc(requesterId,
+                        LocalDateTime.now(), page);
                 break;
             default:
-                bookings = bookingRepository.findAllByItemOwnerId(requesterId, page);
+                bookings = bookingRepository.findAllByItemOwnerIdOrderStartDesc(requesterId, page);
                 break;
         }
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());

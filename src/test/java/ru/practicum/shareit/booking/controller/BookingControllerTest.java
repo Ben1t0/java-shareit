@@ -123,7 +123,6 @@ class BookingControllerTest {
                 .findAllBookingsByBookerIdAndStateWithPagination(99L, BookingState.ALL.name(), 0, 20);
     }
 
-
     @Test
     void successfullyGetAllBookingByItemOwnerId() throws Exception {
         mvc.perform(get("/bookings/owner")

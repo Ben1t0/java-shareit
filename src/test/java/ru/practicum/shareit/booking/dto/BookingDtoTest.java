@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @JsonTest
 class BookingDtoTest {
@@ -35,21 +35,21 @@ class BookingDtoTest {
 
         JsonContent<BookingDto> dtoJsonContent = jsonTester.write(bookingDto);
 
-        then(dtoJsonContent).extractingJsonPathNumberValue("$.id").isEqualTo(
+        assertThat(dtoJsonContent).extractingJsonPathNumberValue("$.id").isEqualTo(
                 Math.toIntExact(bookingDto.getId()));
-        then(dtoJsonContent).extractingJsonPathStringValue("$.start")
+        assertThat(dtoJsonContent).extractingJsonPathStringValue("$.start")
                 .isEqualTo(bookingDto.getStart().toString());
-        then(dtoJsonContent).extractingJsonPathStringValue("$.end")
+        assertThat(dtoJsonContent).extractingJsonPathStringValue("$.end")
                 .isEqualTo(bookingDto.getEnd().toString());
-        then(dtoJsonContent).hasJsonPathMapValue("$.item");
-        then(dtoJsonContent).extractingJsonPathNumberValue("$.item.id")
+        assertThat(dtoJsonContent).hasJsonPathMapValue("$.item");
+        assertThat(dtoJsonContent).extractingJsonPathNumberValue("$.item.id")
                 .isEqualTo(Math.toIntExact(bookingDto.getItem().getId()));
-        then(dtoJsonContent).extractingJsonPathStringValue("$.item.name")
+        assertThat(dtoJsonContent).extractingJsonPathStringValue("$.item.name")
                 .isEqualTo(bookingDto.getItem().getName());
-        then(dtoJsonContent).hasJsonPathMapValue("$.booker");
-        then(dtoJsonContent).extractingJsonPathNumberValue("$.booker.id")
+        assertThat(dtoJsonContent).hasJsonPathMapValue("$.booker");
+        assertThat(dtoJsonContent).extractingJsonPathNumberValue("$.booker.id")
                 .isEqualTo(Math.toIntExact(bookingDto.getBooker().getId()));
-        then(dtoJsonContent).extractingJsonPathStringValue("$.status")
+        assertThat(dtoJsonContent).extractingJsonPathStringValue("$.status")
                 .isEqualTo(BookingStatus.WAITING.name());
     }
 }

@@ -5,7 +5,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.booking.exception.*;
+import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
+import ru.practicum.shareit.booking.exception.BookingNotFoundException;
+import ru.practicum.shareit.booking.exception.BookingUnknownStateException;
+import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
 import ru.practicum.shareit.item.exception.CommentNoBookingException;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
@@ -60,7 +63,7 @@ public class ErrorHandlingControllerAdvice {
         return e.getMessage();
     }
 
-    @ExceptionHandler({ItemAccessDeniedException.class, BookingAccessDeniedException.class})
+    @ExceptionHandler(ItemAccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDeniedException(RuntimeException e) {
         return e.getMessage();

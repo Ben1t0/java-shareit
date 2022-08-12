@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class BookingServiceImplTest {
+class BookingServiceImplIntegrationTest {
 
     @Autowired
     private BookingService bookingService;

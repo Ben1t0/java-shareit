@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.nio.charset.StandardCharsets;
@@ -93,6 +94,18 @@ class ItemRequestControllerTest {
         mvc.perform(get("/requests/{requestId}", "1")
                         .header("X-Sharer-User-Id", "99"))
                 .andExpect(status().isOk());
+
+        verify(itemRequestService, Mockito.times(1)).getById(1L, 99L);
+    }
+
+    @Test
+    void throwExceptionWhenNotFound() throws Exception {
+        when(itemRequestService.getById(any(long.class),any(long.class)))
+                .thenThrow(new ItemRequestNotFoundException(1L));
+
+        mvc.perform(get("/requests/{requestId}", "1")
+                        .header("X-Sharer-User-Id", "99"))
+                .andExpect(status().isNotFound());
 
         verify(itemRequestService, Mockito.times(1)).getById(1L, 99L);
     }
