@@ -10,7 +10,7 @@ import ru.practicum.shareit.item.exception.CommentNoBookingException;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemUnavailableException;
-import ru.practicum.shareit.requests.exception.ItemRequestNotFoundException;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.validation.ValidationErrorResponse;

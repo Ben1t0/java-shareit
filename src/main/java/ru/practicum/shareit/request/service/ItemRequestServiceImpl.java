@@ -1,16 +1,16 @@
-package ru.practicum.shareit.requests.service;
+package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.requests.dto.ItemRequestDto;
-import ru.practicum.shareit.requests.dto.ItemRequestMapper;
-import ru.practicum.shareit.requests.dto.ItemRequestResponseDto;
-import ru.practicum.shareit.requests.exception.ItemRequestNotFoundException;
-import ru.practicum.shareit.requests.model.ItemRequest;
-import ru.practicum.shareit.requests.storage.ItemRequestRepository;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestMapper;
+import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 

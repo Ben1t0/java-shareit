@@ -14,7 +14,7 @@ import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.requests.service.ItemRequestService;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;

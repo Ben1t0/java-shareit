@@ -38,7 +38,6 @@ public class CommentServiceImpl implements CommentService {
                     .created(commentDto.getCreated())
                     .text(commentDto.getText())
                     .build();
-            item.getComments().add(comment);
             commentRepository.save(comment);
             return CommentMapper.toResponseDto(comment);
         } else {

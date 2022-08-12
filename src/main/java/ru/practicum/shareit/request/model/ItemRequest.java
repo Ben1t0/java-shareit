@@ -1,4 +1,4 @@
-package ru.practicum.shareit.requests.model;
+package ru.practicum.shareit.request.model;
 
 import lombok.*;
 import ru.practicum.shareit.item.model.Item;
@@ -29,6 +29,6 @@ public class ItemRequest {
     private User requester;
     private LocalDateTime created;
 
-    @OneToMany(mappedBy = "request")
+    @OneToMany(mappedBy = "request", fetch = FetchType.EAGER)
     private Collection<Item> items = new ArrayList<>();
 }

@@ -1,6 +1,6 @@
-package ru.practicum.shareit.requests.dto;
+package ru.practicum.shareit.request.dto;
 
-import ru.practicum.shareit.requests.model.ItemRequest;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.stream.Collectors;
 
@@ -16,7 +16,7 @@ public class ItemRequestMapper {
                                 .name(item.getName())
                                 .description(item.getDescription())
                                 .available(item.isAvailable())
-                                .requestId(item.getRequest().getId())
+                                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                                 .build())
                         .collect(Collectors.toList()))
                 .build();

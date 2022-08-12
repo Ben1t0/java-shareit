@@ -1,4 +1,4 @@
-package ru.practicum.shareit.requests.dto;
+package ru.practicum.shareit.request.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,12 +15,12 @@ public class ItemRequestResponseDto {
     private long id;
     private String description;
     private LocalDateTime created;
-    private Collection<Item> items;
+    private List<Item> items;
 
     @Builder
     @Getter
     @AllArgsConstructor
-    static class Item {
+    public static class Item {
         private long id;
         private String name;
         private String description;

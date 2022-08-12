@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemMapper {
@@ -22,7 +24,8 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.isAvailable())
                 .request(item.getRequest() != null ? item.getRequest().getId() : null)
-                .comments(item.getComments().stream()
+                .comments(Optional.ofNullable(item.getComments()).stream()
+                        .flatMap(Collection::stream)
                         .map(i -> new ItemDtoWithBookings.Comment(i.getId(), i.getAuthor().getName(),
                                 i.getText(), i.getCreated()))
                         .collect(Collectors.toList()))
