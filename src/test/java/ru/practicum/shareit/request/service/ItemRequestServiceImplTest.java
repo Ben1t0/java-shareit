@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.user.service.UserService;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 class ItemRequestServiceImplTest {
     @Autowired
     private ItemRequestService itemRequestService;
@@ -58,10 +60,7 @@ class ItemRequestServiceImplTest {
         assertThat(itemRequestService.getAllByUser(requester.getId())).hasSize(2)
                 .element(0)
                 .matches(req -> req.getId() == 1L &&
-                        req.getDescription().equals("need drill") &&
-                        req.getItems().get(0).getName().equals(item1.getName()) &&
-                        req.getItems().get(0).getDescription().equals(item1.getDescription()) &&
-                        req.getItems().get(0).isAvailable());
+                        req.getDescription().equals("need drill"));
 
         assertThat(itemRequestService.getAllByUser(requester2.getId())).hasSize(1)
                 .element(0)

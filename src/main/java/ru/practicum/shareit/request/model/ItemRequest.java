@@ -29,6 +29,6 @@ public class ItemRequest {
     private User requester;
     private LocalDateTime created;
 
-    @OneToMany(mappedBy = "request", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "request")
     private Collection<Item> items = new ArrayList<>();
 }

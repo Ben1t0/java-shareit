@@ -18,6 +18,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class ItemServiceImplTest {
 
     @Autowired
