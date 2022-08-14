@@ -21,7 +21,7 @@ class BookingRepositoryTest {
     @Autowired
     private BookingRepository bookingRepository;
 
-    LocalDateTime now = LocalDateTime.now();
+    private final LocalDateTime now = LocalDateTime.now();
 
     @Test
     void getAllUserBookings() {

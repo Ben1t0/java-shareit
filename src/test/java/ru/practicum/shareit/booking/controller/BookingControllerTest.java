@@ -38,7 +38,7 @@ class BookingControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     private BookingDtoCreate bookingDto;
 

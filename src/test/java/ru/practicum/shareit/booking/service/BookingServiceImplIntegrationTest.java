@@ -29,7 +29,7 @@ class BookingServiceImplIntegrationTest {
 
 
     @Test
-    void checkFindAllBookingsByBookerIdAndState() throws InterruptedException {
+    void checkFindAllBookingsByBookerIdAndState() {
         final UserDto itemOwner = UserDto.builder()
                 .name("vasya")
                 .email("vasya@ya.ru")
@@ -47,12 +47,12 @@ class BookingServiceImplIntegrationTest {
 
         item1.setId(itemService.createItem(item1, itemOwner.getId()).getId());
 
-        BookingDtoCreate bookPast = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusNanos(50000000),
-                LocalDateTime.now().plusNanos(100000000));
+        BookingDtoCreate bookPast = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusNanos(5000000),
+                LocalDateTime.now().plusNanos(10000000));
 
         final BookingDto bookDtoPast = bookingService.createBooking(bookPast, booker.getId());
 
-        BookingDtoCreate bookCurrent = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusSeconds(1),
+        BookingDtoCreate bookCurrent = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusNanos(5000000),
                 LocalDateTime.now().plusDays(1));
 
         final BookingDto bookDtoCurrent = bookingService.createBooking(bookCurrent, booker.getId());
@@ -67,8 +67,6 @@ class BookingServiceImplIntegrationTest {
         bookingService.setApprove(bookDtoFuture.getId(), false, itemOwner.getId());
 
         BookingDto find = bookingService.findBookingById(bookDtoFuture.getId(), booker.getId());
-
-        Thread.sleep(1000);
 
         assertThat(bookingService
                 .findAllBookingsByBookerIdAndStateWithPagination(

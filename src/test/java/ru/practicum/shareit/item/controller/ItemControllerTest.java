@@ -31,13 +31,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ItemControllerTest {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    ItemService itemService;
+    private ItemService itemService;
 
     @MockBean
-    CommentService commentService;
+    private CommentService commentService;
 
     @Autowired
     private MockMvc mvc;
@@ -87,12 +87,12 @@ class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        verify(itemService, Mockito.times(0)).createItem(any(),any());
+        verify(itemService, Mockito.times(0)).createItem(any(), any());
     }
 
     @Test
     void throwExceptionWhenPatchWithWrongUser403() throws Exception {
-        when(itemService.patchItem(any(),any()))
+        when(itemService.patchItem(any(), any()))
                 .thenThrow(new ItemAccessDeniedException(1L));
 
         mvc.perform(patch("/items/{itemId}", "1")

@@ -32,7 +32,7 @@ class ItemServiceImplIntegrationTest {
 
     @Transactional
     @Test
-    void getAllByOwnerId() throws InterruptedException {
+    void getAllByOwnerId() {
         final UserDto userDto = UserDto.builder()
                 .name("vasya")
                 .email("vasya@ya.ru")
@@ -54,27 +54,26 @@ class ItemServiceImplIntegrationTest {
         item1.setId(itemService.createItem(item1, userDto.getId()).getId());
         item2.setId(itemService.createItem(item2, userDto.getId()).getId());
 
-        BookingDtoCreate book1prev = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusSeconds(1),
-                LocalDateTime.now().plusSeconds(1));
+        BookingDtoCreate book1prev = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusNanos(5000000),
+                LocalDateTime.now().plusNanos(10000000));
         final BookingDto bookDto1prev = bookingService.createBooking(book1prev, anotherUser.getId());
+
+        BookingDtoCreate book2prev = new BookingDtoCreate(item2.getId(), LocalDateTime.now().plusNanos(5000000),
+                LocalDateTime.now().plusNanos(10000000));
+        final BookingDto bookDto2prev = bookingService.createBooking(book2prev, anotherUser.getId());
 
         BookingDtoCreate book1next = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2));
         final BookingDto bookDto1next = bookingService.createBooking(book1next, anotherUser.getId());
 
-        BookingDtoCreate book2prev = new BookingDtoCreate(item2.getId(), LocalDateTime.now().plusSeconds(1),
-                LocalDateTime.now().plusSeconds(1));
-        final BookingDto bookDto2prev = bookingService.createBooking(book2prev, anotherUser.getId());
 
         BookingDtoCreate book2next = new BookingDtoCreate(item2.getId(), LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2));
         final BookingDto bookDto2next = bookingService.createBooking(book2next, anotherUser.getId());
 
-
-        Thread.sleep(1000);
         Collection<ItemDtoWithBookings> items = itemService.getAllByOwnerId(userDto.getId(), 0, 100);
 
-        ItemDtoWithBookings itemBook = itemService.getItemByIdWithBookingsOrThrow(item1.getId(),userDto.getId());
+        ItemDtoWithBookings itemBook = itemService.getItemByIdWithBookingsOrThrow(item1.getId(), userDto.getId());
 
         assertThat(items).hasSize(2);
         assertThat(items).element(0)

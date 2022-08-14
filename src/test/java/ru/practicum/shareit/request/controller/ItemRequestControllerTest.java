@@ -37,8 +37,8 @@ class ItemRequestControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    ObjectMapper mapper;
-    ItemRequestDto requestDto;
+    private ObjectMapper mapper;
+    private ItemRequestDto requestDto;
 
     @BeforeEach
     void setUp() {
@@ -100,7 +100,7 @@ class ItemRequestControllerTest {
 
     @Test
     void throwExceptionWhenNotFound() throws Exception {
-        when(itemRequestService.getById(any(long.class),any(long.class)))
+        when(itemRequestService.getById(any(long.class), any(long.class)))
                 .thenThrow(new ItemRequestNotFoundException(1L));
 
         mvc.perform(get("/requests/{requestId}", "1")

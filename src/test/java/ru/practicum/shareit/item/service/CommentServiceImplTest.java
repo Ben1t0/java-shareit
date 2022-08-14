@@ -29,7 +29,7 @@ class CommentServiceImplTest {
 
     @Transactional
     @Test
-    void successfullyCreateComment() throws InterruptedException {
+    void successfullyCreateComment() {
         final UserDto owner = UserDto.builder()
                 .name("vasya")
                 .email("vasya@ya.ru")
@@ -48,12 +48,10 @@ class CommentServiceImplTest {
         item1.setId(itemService.createItem(item1, owner.getId()).getId());
 
 
-        BookingDtoCreate bookPast = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusNanos(50000000),
-                LocalDateTime.now().plusNanos(100000000));
+        BookingDtoCreate bookPast = new BookingDtoCreate(item1.getId(), LocalDateTime.now().plusNanos(5000000),
+                LocalDateTime.now().plusNanos(10000000));
 
         bookingService.createBooking(bookPast, commentator.getId());
-
-        Thread.sleep(1000);
 
         CommentDto commentDto = CommentDto.builder()
                 .text("First comment")

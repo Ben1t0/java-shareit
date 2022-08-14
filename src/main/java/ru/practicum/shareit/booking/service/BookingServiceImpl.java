@@ -101,14 +101,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingDto> findAllBookingsByBookerIdAndStateWithPagination(Long requesterId, String state,
                                                                                   Pageable page) {
+        BookingState bookingState = validBookingStateOrThrow(state);
         userService.getUserByIdOrThrow(requesterId);
         Collection<Booking> bookings;
-        BookingState bookingState;
-        try {
-            bookingState = BookingState.valueOf(state);
-        } catch (IllegalArgumentException ex) {
-            throw new BookingUnknownStateException(state);
-        }
+
         switch (bookingState) {
             case WAITING:
                 bookings = bookingRepository.findAllUserBookingsWithStatusOrderStartDesc(requesterId,
@@ -140,12 +136,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingDto> findAllBookingsByItemOwnerAndStateWithPagination(Long requesterId, String state,
                                                                                    Integer from, Integer size) {
-        BookingState bookingState;
-        try {
-            bookingState = BookingState.valueOf(state);
-        } catch (IllegalArgumentException ex) {
-            throw new BookingUnknownStateException(state);
-        }
+        BookingState bookingState = validBookingStateOrThrow(state);
         userService.getUserByIdOrThrow(requesterId);
         Collection<Booking> bookings;
         Pageable page = PageRequest.of(from, size);
@@ -175,6 +166,14 @@ public class BookingServiceImpl implements BookingService {
                 break;
         }
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
+    }
+
+    private BookingState validBookingStateOrThrow(String state) {
+        try {
+            return BookingState.valueOf(state);
+        } catch (IllegalArgumentException ex) {
+            throw new BookingUnknownStateException(state);
+        }
     }
 
     private Booking getBookingByIdOrThrow(Long bookingId) {
