@@ -5,14 +5,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.booking.exception.BookingAccessDeniedException;
 import ru.practicum.shareit.booking.exception.BookingAlreadyChecked;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
+import ru.practicum.shareit.booking.exception.BookingUnknownStateException;
 import ru.practicum.shareit.booking.exception.WrongBookingTimeException;
 import ru.practicum.shareit.item.exception.CommentNoBookingException;
 import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemUnavailableException;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.validation.ValidationErrorResponse;
@@ -20,6 +21,7 @@ import ru.practicum.shareit.validation.Violation;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -48,14 +50,20 @@ public class ErrorHandlingControllerAdvice {
         return new ValidationErrorResponse(violations);
     }
 
+    @ExceptionHandler(BookingUnknownStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleConflict(BookingUnknownStateException ex) {
+        return Map.of("error", ex.getMessage());
+    }
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
+            ItemRequestNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFoundException(RuntimeException e) {
         return e.getMessage();
     }
 
-    @ExceptionHandler({ItemAccessDeniedException.class, BookingAccessDeniedException.class})
+    @ExceptionHandler(ItemAccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDeniedException(RuntimeException e) {
         return e.getMessage();
@@ -73,9 +81,9 @@ public class ErrorHandlingControllerAdvice {
         return e.getMessage();
     }
 
-    @ExceptionHandler(WrongBookingTimeException.class)
+    @ExceptionHandler({WrongBookingTimeException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleWrongBookingTimeException(RuntimeException e) {
+    public String handleCustomRuntimeExceptions(RuntimeException e) {
         return e.getMessage();
     }
 

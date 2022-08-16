@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -21,13 +23,19 @@ public class ItemController {
     private final CommentService commentService;
 
     @GetMapping
-    public Collection<ItemDtoWithBookings> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getAllByOwnerId(userId);
+    public Collection<ItemDtoWithBookings> getAllByOwner(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+        return itemService.getAllByOwnerId(userId, from, size);
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> findItems(@RequestParam() String text) {
-        return itemService.findItemsByQuery(text);
+    public Collection<ItemDto> findItems(
+            @RequestParam() String text,
+            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+        return itemService.findItemsByQuery(text, from, size);
     }
 
     @GetMapping("/{itemId}")

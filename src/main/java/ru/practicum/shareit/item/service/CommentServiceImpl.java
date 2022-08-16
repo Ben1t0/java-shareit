@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -26,8 +27,8 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDto createComment(CommentDto commentDto) {
         Item item = itemService.getItemByIdOrThrow(commentDto.getItemId());
         User author = userService.getUserByIdOrThrow(commentDto.getAuthorId());
-        boolean isBooker = bookingService.findAllBookingsByBookerIdAndState(commentDto.getAuthorId(),
-                        BookingState.PAST).stream()
+        boolean isBooker = bookingService.findAllBookingsByBookerIdAndStateWithPagination(commentDto.getAuthorId(),
+                        BookingState.PAST.toString(), Pageable.unpaged()).stream()
                 .anyMatch(b -> b.getItem().getId().equals(commentDto.getItemId()));
 
         if (isBooker) {
@@ -37,7 +38,6 @@ public class CommentServiceImpl implements CommentService {
                     .created(commentDto.getCreated())
                     .text(commentDto.getText())
                     .build();
-            item.getComments().add(comment);
             commentRepository.save(comment);
             return CommentMapper.toResponseDto(comment);
         } else {

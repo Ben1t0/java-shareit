@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -11,6 +14,7 @@ import ru.practicum.shareit.item.exception.ItemAccessDeniedException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
@@ -23,12 +27,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
     private final BookingService bookingService;
+    private final ItemRequestService itemRequestService;
 
     @Override
-    public Collection<ItemDtoWithBookings> getAllByOwnerId(Long ownerId) {
+    public Collection<ItemDtoWithBookings> getAllByOwnerId(Long ownerId, Integer from, Integer size) {
         userService.getUserByIdOrThrow(ownerId);
+        Pageable page = PageRequest.of(from, size, Sort.by("id"));
 
-        return itemRepository.findAllByOwnerId(ownerId).stream()
+        return itemRepository.findAllByOwnerId(ownerId, page).stream()
                 .map(ItemMapper::toDtoWithBookings)
                 .peek(item -> {
                     Booking lastBooking = bookingService.findLastBookingForItem(item.getId());
@@ -48,6 +54,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         Item newItem = ItemMapper.toItem(itemDto);
+        if (itemDto.getRequestId() != null && itemDto.getRequestId() >= 0) {
+            newItem.setRequest(itemRequestService.getByIdOrThrow(itemDto.getRequestId()));
+        }
         newItem.setOwner(userService.getUserByIdOrThrow(userId));
 
         return ItemMapper.toDto(itemRepository.save(newItem));
@@ -122,11 +131,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> findItemsByQuery(String text) {
+    public Collection<ItemDto> findItemsByQuery(String text, Integer from, Integer size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         } else {
-            return itemRepository.findItemsByQuery(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
+            Pageable page = PageRequest.of(from, size);
+            return itemRepository.findItemsByQueryWithPagination(text, page).stream()
+                    .map(ItemMapper::toDto)
+                    .collect(Collectors.toList());
         }
     }
 
