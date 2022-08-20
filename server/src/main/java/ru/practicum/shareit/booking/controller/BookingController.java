@@ -1,16 +1,11 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.validation.Validation;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
@@ -20,8 +15,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    @Validated(Validation.OnCreate.class)
-    public BookingDto createBooking(@Valid @RequestBody BookingDtoCreate bookingDtoCreate,
+    public BookingDto createBooking(@RequestBody BookingDtoCreate bookingDtoCreate,
                                     @RequestHeader("X-Sharer-User-Id") Long requesterId) {
         return bookingService.createBooking(bookingDtoCreate, requesterId);
     }
@@ -43,8 +37,8 @@ public class BookingController {
     public Collection<BookingDto> getAllBookingsByBookerId(
             @RequestParam(name = "state", defaultValue = "ALL") String state,
             @RequestHeader("X-Sharer-User-Id") Long requesterId,
-            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @RequestParam(value = "size", defaultValue = "20") Integer size) {
         return bookingService.findAllBookingsByBookerIdAndStateWithPagination(requesterId, state, from, size);
     }
 
@@ -52,8 +46,8 @@ public class BookingController {
     public Collection<BookingDto> getAllBookingsByItemOwner(
             @RequestParam(name = "state", defaultValue = "ALL") String state,
             @RequestHeader("X-Sharer-User-Id") Long requesterId,
-            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @RequestParam(value = "size", defaultValue = "20") Integer size) {
         return bookingService.findAllBookingsByItemOwnerAndStateWithPagination(requesterId, state, from, size);
     }
 }

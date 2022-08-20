@@ -6,9 +6,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
@@ -18,7 +15,7 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequestResponseDto createRequest(@Valid @RequestBody ItemRequestDto request,
+    public ItemRequestResponseDto createRequest(@RequestBody ItemRequestDto request,
                                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemRequestService.createRequest(request, userId);
     }
@@ -31,8 +28,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     public Collection<ItemRequestResponseDto> getAll(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(value = "size", defaultValue = "20") @Positive Integer size) {
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @RequestParam(value = "size", defaultValue = "20") Integer size) {
         return itemRequestService.getAll(userId, from, size);
     }
 
