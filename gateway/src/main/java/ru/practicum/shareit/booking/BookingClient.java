@@ -49,7 +49,7 @@ public class BookingClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "approved", Boolean.toString(isApproved)
         );
-        return patch("/" + id + "?approved={approved}", approverId, parameters,null);
+        return patch("/" + id + "?approved={approved}", approverId, parameters, null);
     }
 
     public ResponseEntity<Object> getBookingsByItemOwner(Long requesterId, BookingState state, Integer from,
