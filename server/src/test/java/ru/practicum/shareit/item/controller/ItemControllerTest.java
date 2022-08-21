@@ -86,8 +86,8 @@ class ItemControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verify(itemService, Mockito.times(0)).createItem(any(), any());
+                .andExpect(status().isOk());
+        verify(itemService, Mockito.times(1)).createItem(any(), any());
     }
 
     @Test

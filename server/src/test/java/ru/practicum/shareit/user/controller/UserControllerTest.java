@@ -75,8 +75,8 @@ class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verify(userService, Mockito.times(0)).createUser(any());
+                .andExpect(status().isOk());
+        verify(userService, Mockito.times(1)).createUser(any());
     }
 
     @Test
@@ -87,8 +87,8 @@ class UserControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        verify(userService, Mockito.times(0)).createUser(any());
+                .andExpect(status().isOk());
+        verify(userService, Mockito.times(1)).createUser(any());
     }
 
     @Test
