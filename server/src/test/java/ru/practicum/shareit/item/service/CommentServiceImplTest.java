@@ -53,6 +53,7 @@ class CommentServiceImplTest {
 
         bookingService.createBooking(bookPast, commentator.getId());
 
+        //Требуется задержка перед проверкой чтобы бронирования стали "прошедшими"
         Thread.sleep(50);
         CommentDto commentDto = CommentDto.builder()
                 .text("First comment")
